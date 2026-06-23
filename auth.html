@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TryCalendar</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0f0f0f;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background-image: radial-gradient(ellipse at top, #1a1a2e 0%, #0a0a0a 70%);
+    }
+    .card {
+      background: #1a1a2e;
+      padding: 36px 32px;
+      border-radius: 16px;
+      width: 320px;
+      border: 1px solid #2a2a3e;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    .card h2 {
+      text-align: center;
+      margin-bottom: 24px;
+      font-size: 1.3rem;
+      color: #e50914;
+    }
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      margin: 6px 0;
+      background: #0f0f0f;
+      border: 1px solid #2a2a3e;
+      color: #fff;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      transition: border-color 0.2s;
+    }
+    input:focus {
+      outline: none;
+      border-color: #e50914;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #e50914;
+      border: none;
+      color: #fff;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-top: 14px;
+      transition: background 0.2s, transform 0.1s;
+    }
+    button:hover { background: #ff1a1a; }
+    button:active { transform: scale(0.98); }
+    #toggle-link {
+      text-align: center;
+      cursor: pointer;
+      color: #e50914;
+      font-size: 0.85rem;
+      margin-top: 18px;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+    }
+    #toggle-link:hover { opacity: 1; }
+    .register-hint { display: none; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2 id="title">Iniciar Sesión</h2>
+    <p style="text-align:center;color:#e50914;font-size:0.75rem;margin:-12px 0 18px;opacity:0.7">TryAuth</p>
+    <input type="text" id="user" placeholder="Usuario" autocomplete="username">
+    <input type="password" id="pass" placeholder="Contraseña" autocomplete="current-password">
+    <button id="btn-auth">Ingresar</button>
+    <p id="toggle-link">¿No tienes cuenta? Regístrate aquí</p>
+    <p style="text-align:center;color:#555;font-size:0.65rem;margin-top:16px">Hecho por TryFlama para TryAuth</p>
+  </div>
+
+  <script>
+    let isLogin = true;
+    const title = document.getElementById('title');
+    const btn = document.getElementById('btn-auth');
+    const toggle = document.getElementById('toggle-link');
+    const userInput = document.getElementById('user');
+    const passInput = document.getElementById('pass');
+
+    toggle.addEventListener('click', () => {
+      isLogin = !isLogin;
+      title.textContent = isLogin ? 'Iniciar Sesión' : 'Registrarse';
+      btn.textContent = isLogin ? 'Ingresar' : 'Registrar';
+      toggle.textContent = isLogin ? '¿No tienes cuenta? Regístrate aquí' : '¿Ya tienes cuenta? Inicia sesión';
+      passInput.autocomplete = isLogin ? 'current-password' : 'new-password';
+      userInput.focus();
+    });
+
+    btn.addEventListener('click', async () => {
+      const user = userInput.value.trim();
+      const pass = passInput.value.trim();
+      if (!user || !pass) { alert('Completa todos los campos'); return; }
+
+      btn.disabled = true;
+      btn.textContent = 'Cargando...';
+
+      try {
+        const url = isLogin
+          ? 'https://backendauth-qxg5.onrender.com/api/login'
+          : 'https://backendauth-qxg5.onrender.com/api/register';
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: user, password: pass })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          if (isLogin) {
+            localStorage.setItem('trycalendar_jwt', data.token);
+            localStorage.setItem('trycalendar_user', data.username || user);
+            if (window.opener) {
+              window.opener.postMessage({ type: 'auth-success', token: data.token }, '*');
+            }
+            window.close();
+          } else {
+            alert('Usuario registrado. Ya puedes iniciar sesión.');
+            toggle.click();
+          }
+        } else {
+          alert('Error: ' + (data.error || 'Algo salió mal'));
+        }
+      } catch {
+        alert('Error de conexión. Intenta de nuevo.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = isLogin ? 'Ingresar' : 'Registrar';
+      }
+    });
+
+    passInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') btn.click();
+    });
+  </script>
+</body>
+</html>

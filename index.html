@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>TryCalendar</title>
+</head>
+<body>
+  <div class="app-container">
+    <header>
+      <div class="logo"><span>Try</span>Calendar</div>
+      <button id="login-btn">Iniciar Sesión</button>
+    </header>
+
+    <div class="nav-bar">
+      <button id="prev" title="Mes anterior">◀</button>
+      <h2 id="mes-titulo">Junio 2026</h2>
+      <button id="next" title="Mes siguiente">▶</button>
+    </div>
+
+    <div class="days-header">
+      <div>Dom</div><div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div>
+    </div>
+
+    <div id="calendario-dias" class="dias-grid"></div>
+  </div>
+
+  <div id="day-detail">
+    <h3 id="detail-title">1 de junio</h3>
+    <textarea id="detail-note" placeholder="Escribe una nota para este día..."></textarea>
+    <div class="actions">
+      <button class="btn-save" id="btn-save-note">Guardar</button>
+      <button class="btn-close" id="btn-close-detail">Cerrar</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
