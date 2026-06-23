@@ -3,7 +3,7 @@
 Calendario interactivo con soporte para notas diarias y autenticación de usuarios. Creado con **HTML, CSS y JavaScript vanilla**.
 
 ## Captura
-https://i.ibb.co/7J6FBC3s/Captura-desde-2026-06-23-02-06-51.png
+[![Captura](https://i.ibb.co/7J6FBC3s/Captura-desde-2026-06-23-02-06-51.png)](#readme)
 
 
 ## Funcionalidades
